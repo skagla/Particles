@@ -20,7 +20,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using UnityEngine;
-
+using System.Collections;
+using System.Collections.Generic;
 
 /// \mainpage
 /// \section Overview
@@ -413,11 +414,13 @@ public delegate void OscMessageHandler(OscMessage oscM);
 public class OSC : MonoBehaviour
 {
 
-    public int inPort = 7000;
+    public int inPort = 1337;
     public string outIP = "127.0.0.1";
-    public int outPort = 6161;
+    private string[] outIPs;
+    public int outPort = 1337;
 
     private UDPPacketIO OscPacketIO;
+    private List<UDPPacketIO> oscPacketIOs = new List<UDPPacketIO>();
     Thread ReadThread;
     private bool ReaderRunning;
     private OscMessageHandler AllMessageHandler;
@@ -454,6 +457,10 @@ public class OSC : MonoBehaviour
         //print("Opening OSC listener on port " + inPort);
 
         OscPacketIO = new UDPPacketIO(outIP, outPort, inPort);
+ //       foreach (string outIP_i in outIPs)
+//        {
+//            oscPacketIOs.Add(new UDPPacketIO(outIP, outPort, 0));
+ //       }
         AddressTable = new Hashtable();
 
         messagesReceived = new ArrayList();

@@ -9,7 +9,8 @@ using NaughtyAttributes;
 public class OscSend : MonoBehaviour {
 
 	public OSC osc;
-
+    public string prefix;
+    [ReorderableList]
     public List<Sender> senders = new List<Sender>();
 
     //public string ad
@@ -20,7 +21,7 @@ public class OscSend : MonoBehaviour {
 
         foreach (Sender sender in senders)
         {
-            sender.SetOsc(osc);
+            sender.InitOsc(osc, prefix);
         }
     }
 	
@@ -53,11 +54,14 @@ public class OscSend : MonoBehaviour {
 public class Sender
 {
     public string oscAdress;
+    private string prefix;
     [Range(0,1)]
     public float value;
     private float oldValue = -99;
 
     private OSC osc;
+
+
 
     public void Update()
     {
@@ -71,13 +75,14 @@ public class Sender
     public void Send()
     {
         OscMessage message = new OscMessage();
-        message.address = oscAdress;
+        message.address = prefix + oscAdress;
         message.values.Add(value);
         osc.Send(message);
     }
 
-    public void SetOsc(OSC _osc)
+    public void InitOsc(OSC _osc, string _prefix)
     {
         osc = _osc;
+        prefix = _prefix;
     }
 }

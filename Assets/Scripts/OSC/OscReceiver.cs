@@ -8,7 +8,8 @@ using NaughtyAttributes;
 
 public class OscReceiver : MonoBehaviour
 {
-    public bool debug = false;
+    public bool showAllMsgs = false;
+    public bool showMyPrefixMsgs = false;
     public OSC osc;
     // public string oscAdress;
 
@@ -63,9 +64,16 @@ public class OscReceiver : MonoBehaviour
         //output = "" + message.GetFloat(0);
         //output = message.values.; inputs[i] = message.GetFloat(i);
         // onOSCReceivedFloat.Invoke(message.GetFloat(0));
-        if (debug)
+        if (showAllMsgs)
             print("osc: " + message.address + ", " + message.GetFloat(0)); //+ ", " + message.values
+
+        if (showMyPrefixMsgs)
+        {
+            if (message.address.Contains(prefix+"/"))
+                print("osc: " + message.address + ", " + message.GetFloat(0)); //+ ", " + message.values
+        }
     }
+
 
 
 }
@@ -73,13 +81,14 @@ public class OscReceiver : MonoBehaviour
 [Serializable]
 public class Converter
 {
-
+    public string oscAdress;
+    public string vfxParameterName;
 
     VisualEffect visualEffect;
     public bool isActive;
+    public bool showMsg;
 
-    public string oscAdress;
-    public string vfxParameterName;
+
 
 
     [BoxGroup("Mapping")]
@@ -104,6 +113,8 @@ public class Converter
 
     public void OnReceive(OscMessage message)
     {
+        if(showMsg)
+            Debug.Log("osc: " + message.address + ", " + message.GetFloat(0));
 
         input = message.GetFloat(0);
         output = MapParameter(input);
@@ -113,7 +124,6 @@ public class Converter
         }
         if (isActive)
         {
-            Debug.Log("osc: " + message.address + ", " + message.GetFloat(0));
             visualEffect.SetFloat(vfxParameterName, output);
         }
     }
